@@ -23,8 +23,16 @@ public class SummarizerService {
     public String summarize(String text) {
 
         // Limit input to control cost
-        if (text.length() > 5000) {
-            text = text.substring(0, 5000);
+    	if (text == null || text.trim().isEmpty()) {
+    	    throw new RuntimeException("Extracted text from PDF is empty");
+    	}
+
+    	if (text.length() > 5000) {
+    	    text = text.substring(0, 5000);
+    	}
+
+        if (text == null || text.trim().isEmpty()) {
+            throw new RuntimeException("No text available for summarization");
         }
 
         String requestBody = """
