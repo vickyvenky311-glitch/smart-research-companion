@@ -23,14 +23,14 @@ public class SummarizerService {
     public String summarize(String text) {
 
         // Limit input to control cost
-        if (text.length() > 3000) {
-            text = text.substring(0, 3000);
+        if (text.length() > 5000) {
+            text = text.substring(0, 5000);
         }
 
         String requestBody = """
         {
           "model": "gpt-4.1-mini",
-          "input": "Summarize the following text in 5–6 clear lines:\\n%s"
+          "input": "You are an academic research assistant.\\n\\nSummarize the following content in a detailed, structured format suitable for research notes.\\n\\nRules:\\n- Do NOT write long paragraphs\\n- Each section must be 1–2 lines only\\n- Leave one blank line between sections\\n- Be clear, factual, and concise\\n- Do not repeat ideas\\n- Do not add opinions or filler text\\n\\nUse the following format strictly:\\n\\n### Overview\\n1–2 lines explaining what the article is about.\\n\\n### Key Concepts\\n1–2 lines describing the main ideas or arguments.\\n\\n### Important Details\\n1–2 lines covering notable facts, examples, or explanations.\\n\\n### Implications / Use Case\\n1–2 lines explaining why this information is useful or relevant.\\n\\nIf the article is long or complex, you may add more sections using clear headings.\\nFocus on clarity and depth, not brevity.\\n\\nContent to summarize:\\n%s"
         }
         """.formatted(text.replace("\"", ""));
 
