@@ -22,17 +22,13 @@ public class SummarizerService {
 
     public String summarize(String text) {
 
-        // Limit input to control cost
-    	if (text == null || text.trim().isEmpty()) {
-    	    throw new RuntimeException("Extracted text from PDF is empty");
-    	}
-
-    	if (text.length() > 5000) {
-    	    text = text.substring(0, 5000);
-    	}
-
         if (text == null || text.trim().isEmpty()) {
-            throw new RuntimeException("No text available for summarization");
+            return "No text found to summarize.";
+        }
+
+        // Limit input length (important for OpenAI)
+        if (text.length() > 5000) {
+            text = text.substring(0, 5000);
         }
 
         String requestBody = """
@@ -55,12 +51,12 @@ public class SummarizerService {
         try (Response response = client.newCall(request).execute()) {
 
             if (!response.isSuccessful()) {
-                throw new RuntimeException("OpenAI API error: " + response);
+                throw new RuntimeException("OpenAI API error: " + response.code());
             }
 
             String body = response.body().string();
-
             JSONObject json = new JSONObject(body);
+
             JSONArray output = json.getJSONArray("output");
             JSONObject firstOutput = output.getJSONObject(0);
             JSONArray content = firstOutput.getJSONArray("content");
@@ -74,7 +70,7 @@ public class SummarizerService {
 
             return "No summary text returned.";
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Failed to call OpenAI API", e);
         }
     }
